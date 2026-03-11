@@ -4,10 +4,10 @@ import cors from 'cors';
 import connectToDb from './DB/config.js';
 import authRoute from './routes/authroutes.js';
 import cookieParser from 'cookie-parser';
-import dns from 'dns';
+import dns from "dns";
 
-dns.setServers(['8.8.8.8', '8.8.4.4']);
-dns.setDefaultResultOrder('ipv4first');
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+dns.setDefaultResultOrder("ipv4first");
 
 const app=express()
 

@@ -1,38 +1,48 @@
 import jwt from "jsonwebtoken";
 
-export const authMiddleare = async (req, res, next) => {
+export const authMiddleware = async(req, res, next) => {
 
   const authHeader = req.headers.authorization;
 
-  console.log(authHeader);
+  console.log("Auth Header:", authHeader);
 
+  // 1️⃣ No header
   if (!authHeader) {
     return res.status(401).json({
-      message: "Token is missing"
+      message: "Authorization header missing",
+    });
+  }
+
+  // 2️⃣ Invalid format
+  if (!authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      message: "Invalid authorization format",
     });
   }
 
   const token = authHeader.split(" ")[1];
 
   try {
+    const decoded = await jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-    const decodedToken = jwt.verify(
-      token,
-      process.env.JWT_ACCESS_SECRET
-    );
-
-    req.user = decodedToken;
+    req.user = decoded;
+    console.log(req.user)
 
     next();
+  } catch (err) {
 
-  } catch (e) {
+    console.log("JWT Error:", err.message);
 
-    console.log(e);
+    // 3️⃣ Token expired
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Access token expired",
+      });
+    }
 
-    return res.status(401).json({
-      message: "Token is not valid"
+    // 4️⃣ Invalid token
+    return res.status(403).json({
+      message: "Invalid token",
     });
-
   }
-
 };

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { genAccessToken } from "../service/servicetoken.js"
 
-export const refreshToken = (req, res) => {
+export const refreshToken = async(req, res) => {
     const token = req.cookies.refreshToken
 
     if (!token) {
@@ -12,9 +12,7 @@ export const refreshToken = (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
 
-        const newAccessToken = genAccessToken({
-            regNo: decoded.regNo
-        })
+        const newAccessToken =await genAccessToken(decoded)
         console.log("new access token :",newAccessToken)
 
         res.status(200).json({

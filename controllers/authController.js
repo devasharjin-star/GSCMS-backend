@@ -4,12 +4,7 @@ import User from "../models/usermodel.js";
 
 export const registerController = async (req, res) => {
     try {
-        const { regNo, password } = req.body
-
-        const result = await User.create({
-            regNo,
-            password
-        })
+        const result = await User.create(req.body)
         if(result){
             res.status(200).json({
                 message: result
@@ -48,7 +43,8 @@ export const loginController = async(req, res) => {
     const accessToken=await genAccessToken(user)
     const refreshToken=await genRefreshToken(user)
 
-    console.log(accessToken)
+    console.log(refreshToken)
+
 
     res.cookie("refreshToken",refreshToken,{
       httpOnly:true,
@@ -58,7 +54,8 @@ export const loginController = async(req, res) => {
 
     res.status(200).json({
       message: "Login successful",
-      accessToken:accessToken
+      accessToken:accessToken,
+      role:user.role
     });
 
   } catch (error) {
